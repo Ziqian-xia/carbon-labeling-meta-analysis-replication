@@ -1,0 +1,19 @@
+"item","value","expected","tolerance","pass"
+"k effect sizes",52,52,0,TRUE
+"articles",22,22,0,TRUE
+"multilevel d",0.13266572337346,0.133,0.001,TRUE
+"multilevel CI lower",0.0289900905241685,0.029,0.001,TRUE
+"multilevel CI upper",0.236341356222752,0.236,0.001,TRUE
+"Q statistic",260.76924586479,260.77,0.02,TRUE
+"PET intercept/lower-bound g",0.000230524459704127,0,0.001,TRUE
+"PET CI lower",-0.141790732017929,-0.142,0.001,TRUE
+"PET CI upper",0.142251780937337,0.142,0.001,TRUE
+"RE prediction interval lower",-0.347156623701924,-0.347,0.001,TRUE
+"RE prediction interval upper",0.631369325268332,0.631,0.001,TRUE
+"selection-model smallest p",0.196061333987616,0.196,0.001,TRUE
+"z-curve ERR",0.769170394898649,0.77,0.005,TRUE
+"z-curve EDR",0.730396720769349,0.73,0.005,TRUE
+"Soric implied FDR percent",1.94273137759313,1.9,0.1,TRUE
+"PET small-study slope",1.02631092394974,1.026,0.001,TRUE
+"PET all-moderator slope",1.05808960423285,1.058,0.001,TRUE
+"sqrt(1/n) slope",1.94986171140913,1.95,0.001,TRUE

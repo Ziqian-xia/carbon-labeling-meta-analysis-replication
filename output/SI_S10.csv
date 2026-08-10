@@ -1,0 +1,8 @@
+"specification","statistic","p","note"
+"PET, predictor = SE (primary)","b=1.026",0.023,"small-study effect present"
+"PET + research setting (lab/field)","b=0.955",0.03,"survives adjustment"
+"PET + all moderators (setting, scenario, label, product)","b=1.058",0.005,"survives adjustment"
+"Funnel test, predictor = sqrt(1/n)  [SMD-artifact-robust]","b=1.950",0.041,"survives; not a metric artifact"
+"Egger, predictor = SE","z=3.10",0.002,""
+"Egger, predictor = variance","z=1.62",0.106,""
+"Precision vs research setting (mean SE Lab vs Field)","0.162 vs 0.181",0.607,"precision uncorrelated with setting"
