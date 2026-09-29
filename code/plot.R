@@ -631,7 +631,9 @@ regtest(rm, model = "rma")
 ranktest(res_mv)
 
 #Test of excess significance (TES)
-dat_agg <- aggregate(dat, cluster = studyid, yi = "cohens_d", vi = "v",rho= 0.5)
+# This retains the common-effect, comparison-level diagnostic specification.
+# Unique studyid values do not aggregate dependent effects.
+dat_agg <- dat
 tes(dat_agg$yi, dat_agg$vi, test = "chi2")
 
 

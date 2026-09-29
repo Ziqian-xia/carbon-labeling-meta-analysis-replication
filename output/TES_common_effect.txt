@@ -1,0 +1,17 @@
+TES under a common-effect assumption, treating comparisons as independent.
+This diagnostic does not account for between-effect heterogeneity or within-article dependence.
+
+Test of Excess Significance
+
+Observed Number of Significant Findings: 23 (out of 52)
+Expected Number of Significant Findings: 3.8380
+Observed Number / Expected Number:       5.9926
+
+Estimated Power of Tests (based on theta = 0.0211)
+
+   min      q1  median      q3     max 
+0.0502  0.0510  0.0516  0.0604  0.5578 
+
+Test of Excess Significance: p < .0001 (X^2 = 103.2925, df = 1)
+Limit Estimate (theta_lim):  0.1546 (where p = 0.1)
+

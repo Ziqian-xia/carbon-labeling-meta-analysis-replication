@@ -31,8 +31,9 @@ regtest(rm, model = "rma")
 ranktest(res_mv)
 
 #Test of excess significance (TES)
-dat_agg <- aggregate(dat, cluster = studyid, yi = "cohens_d", vi = "v",rho= 0.5)
-tes(dat_agg$yi, dat_agg$vi, test = "chi2")
+# Common-effect diagnostic, treating effect-size comparisons as independent.
+# studyid is unique per row; aggregating by it does not remove dependence.
+tes(dat$yi, dat$vi, tau2 = 0, test = "chi2")
 
 
 ### BMA random

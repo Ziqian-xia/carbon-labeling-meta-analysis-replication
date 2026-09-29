@@ -69,3 +69,24 @@ The PET/PEESE-only ensemble differs from selection-model ensembles.
 Do not silently substitute a different API or ensemble to claim exact reproduction.
 The current manuscript's Bayesian output still requires a pinned, verified environment
 and archived fit/summary/convergence records; it is not covered by `run_all.R`.
+
+## TES and illustrative power curve
+
+```sh
+Rscript --vanilla code/17_illustrative_diagnostics.R
+```
+
+Additional dependencies: ggplot2 and metapower (verified 0.2.2).
+TES retains its common-effect specification (`tau2 = 0`) and treats the 52
+comparisons as independent. Its 23 observed versus 3.84 expected findings are
+an auxiliary diagnostic; the expectation does not incorporate the pronounced
+heterogeneity or dependence among effects from the same article.
+
+Figure S5 retains the previous numerical input construction, now explicitly as
+an **illustration**: 52 independent, equally sized studies; assumed total N per
+study approximately 1,132; assumed I² approximately 61.8%. The N input equals
+half the mean of the dataset's mixed-unit SampleSize field and the I² input is
+`tau2 / (tau2 + mean(v))`; neither is an estimate of the actual participant count
+or the metafor I² reported for the dataset. The figure is not used to establish
+the power or adequacy of the meta-analysis. Outputs include the assumptions,
+curve values, corrected figure labels, and the TES results.
