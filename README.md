@@ -4,8 +4,16 @@ This repository contains data and R code for reproducing the analyses in
 “A meta-analysis of the real-world impact of carbon labeling on consumer choices.”
 
 The canonical dataset is `data/metadata_change.xlsx` (k = 52 effect sizes, 22 articles).
-Reproduces the manuscript headline numbers exactly: multilevel d = 0.133 [0.029, 0.236];
-Q(51) = 260.77; PET-corrected g = 0.000 [−0.142, 0.142].
+**Metadata update (2026-09-28):** six effect-direction corrections (IDs35, 38,
+46–49), a Nowak extraction correction (ID4), and participant-level Rahmani
+extraction corrections (IDs54–55). The existing 52 records, 22 articles, comparison
+groups, and Cohen's d convention are retained. Bentil's numerical inputs are unchanged.
+
+The committed model outputs and numerical targets in `run_all.R` predate these
+corrections. They describe the submitted dataset, not the updated metadata. Models
+have not been rerun for this update. The submitted baseline remains at commit
+`54b059e`, with multilevel d = 0.133 [0.029, 0.236], Q(51) = 260.77, and the reported
+PET estimate = 0.000 [−0.142, 0.142].
 
 > NOTE: a same-named file `plot_v1108/data/metadata_change.xlsx` elsewhere is a DIFFERENT
 > (k = 55) cut and must not be used. Always use the copy in this package.
@@ -37,7 +45,9 @@ Supplementary Tables S7-S10, and writes:
 - `output/reproduction_check.csv`
 - `output/reproduction_summary.txt`
 
-All automated checks should pass.
+The checks target the submitted dataset at commit `54b059e`. With the corrected
+metadata they are expected to fail against those historical values. Running this
+command regenerates output files; do not treat existing outputs as updated results.
 
 ## Reproducibility / environment
 - R 4.5.2; metafor 4.8.0; weightr 2.0.2; zcurve 2.4.6.
@@ -48,7 +58,7 @@ All automated checks should pass.
   from source with `PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig`, and run with
   `DYLD_FALLBACK_LIBRARY_PATH=/opt/homebrew/lib` and `parallel = FALSE`.
 
-## Key findings reproduced by this package
+## Historical findings for the submitted dataset (not rerun after metadata corrections)
 - 3PSM (heterogeneity-robust selection model): no detectable selection; likelihood-ratio tests are non-significant across cut-points (smallest p = 0.196).
 - z-curve: ERR = 0.77, EDR = 0.73, implied false-discovery rate ≈ 2% → significant findings mostly genuine.
 - Prediction interval (overall): [−0.35, 0.63]; I² ≈ 96%.
