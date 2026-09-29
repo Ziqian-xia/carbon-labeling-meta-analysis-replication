@@ -62,16 +62,24 @@ s1 <- ggplot(modeldata, aes(y = beta, x = esttype, ymin = CI_L, ymax = CI_U)) +
 
 # Display the plot
 print(s1)
+ggsave(file.path(output_dir, "Figure_S1_sensitivity.png"), s1,
+       width = 10, height = 7.93, units = "in", dpi = 300, bg = "white")
 
 #figure s2
 library(metafor)
 m1 <- rma(yi=cohens_d,vi=v,data = metadata_change)
+png(file.path(output_dir, "Figure_S2_cumulative.png"),
+    width = 2400, height = 2072, res = 300)
 plot(cumul(m1))
 p2a <- recordPlot()
+dev.off()
 
 #figure s3
 rm <- rma(yi=cohens_d, vi=v, data = metadata_change)
+png(file.path(output_dir, "Figure_S3_influence.png"),
+    width = 2400, height = 1996, res = 300)
 influence.rma.uni(rm) %>% plot()
+dev.off()
 
 #figure s4: subgroup analysis
 metadata_change$scenario <- as.factor(metadata_change$scenario)
@@ -161,6 +169,8 @@ s4 <- ggplot(combined_results, aes(x = effect_size, y = reorder(factor, desc(pan
     legend.position = "none"  
   )
 s4
+ggsave(file.path(output_dir, "Figure_S4_subgroups.png"), s4,
+       width = 10, height = 11.2, units = "in", dpi = 300, bg = "white")
 
 #figure s5
 library(metafor)
@@ -251,6 +261,9 @@ power_plot1 <- ggplot(df, aes(x = d, y = power)) +
     panel.border     = element_rect(color = "black", linewidth = 0.8),
     legend.position  = "none"
   )
+
+ggsave(file.path(output_dir, "Figure_S5_power.png"), power_plot1,
+       width = 10, height = 7.93, units = "in", dpi = 300, bg = "white")
 
 #table s3: Omnibus
 library(dplyr)
@@ -436,5 +449,4 @@ doc <- body_add_flextable(doc, ft)
 doc <- body_add_par(doc, "", style = "Normal")
 
 print(doc, target = "meta_regression_results_table.docx")
-
 

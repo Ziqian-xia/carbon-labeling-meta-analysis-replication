@@ -107,6 +107,8 @@ p1a <- make_figure1a(
 )
 
 p1a
+ggsave(file.path(output_dir, "Figure_1A_articles.png"), p1a,
+       width = 7.5, height = 3.5, units = "in", dpi = 300, bg = "white")
 
 
 #map
@@ -183,6 +185,8 @@ p1a_map <- ggplot(world_data) +
   theme_map(base_size = 10)
 
 p1a_map
+ggsave(file.path(output_dir, "Figure_1_map.png"), p1a_map,
+       width = 9, height = 5, units = "in", dpi = 300, bg = "white")
 
 
 #fig1.B
@@ -317,6 +321,8 @@ p1b <- ggplot(df_long,
   theme_nature_lollipop()
 
 p1b
+ggsave(file.path(output_dir, "Figure_1B_characteristics.png"), p1b,
+       width = 9, height = 7, units = "in", dpi = 300, bg = "white")
 
 
 
@@ -397,7 +403,7 @@ plot_studies <- plot_studies %>%
 # Pooled
 pred <- predict(r)
 plot_pooled <- tibble(
-  StudyLabel  = "Random-effects model",
+  StudyLabel  = "Three-level random-effects model",
   cohens_d    = as.numeric(pred$pred),
   ci.lb       = as.numeric(pred$ci.lb),
   ci.ub       = as.numeric(pred$ci.ub),
@@ -629,6 +635,10 @@ dat_agg <- aggregate(dat, cluster = studyid, yi = "cohens_d", vi = "v",rho= 0.5)
 tes(dat_agg$yi, dat_agg$vi, test = "chi2")
 
 
+png(file.path(output_dir, "Figure_3A_funnel.png"),
+    width = 2400, height = 2400, res = 300)
+par(pty = "s", mar = c(5.8, 6.2, 2.0, 1.5),
+    cex.axis = 1.5, cex.lab = 1.7)
 funnel(
   rm,
   xlab = "Effect size (Cohen's d)",
@@ -642,9 +652,23 @@ legend(
   "topright",
   legend = c("p < 0.10", "p < 0.05", "p < 0.01"),
   fill = c("gray80", "gray90", "white"),
-  cex = 0.8
+  cex = 1.15
+)
+dev.off()
+
+#PET regression line
+pet_line <- rma.mv(
+  yi = cohens_d,
+  V = v,
+  mods = ~ sei,
+  random = list(~1 | studyid, ~1 | Key),
+  method = "REML",
+  data = dat
 )
 
+png("fig3b.png", width = 2400, height = 2400, res = 300)
+par(pty = "s", mar = c(5.8, 6.2, 2.0, 1.5),
+    cex.axis = 1.5, cex.lab = 1.7)
 plot(
   dat$sei,
   dat$cohens_d,
@@ -655,9 +679,10 @@ plot(
 )
 
 abline(
-  lm(cohens_d ~ sei, data = dat),
+  a = as.numeric(pet_line$b[1]),
+  b = as.numeric(pet_line$b[2]),
   lwd = 2
 )
 
 abline(h = 0, lty = 2)
-
+dev.off()

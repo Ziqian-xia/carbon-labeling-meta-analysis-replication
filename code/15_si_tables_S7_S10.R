@@ -88,8 +88,9 @@ S10 <- data.frame(
                 sprintf("%.3f vs %.3f", mean(d$sei[d$research_setting=="Lab"]), mean(d$sei[d$research_setting=="Field"]))),
   p = c(round(p0$pval[2],3), round(p1$pval[2],3), round(p2$pval[2],3), round(ps$pval[2],3),
         round(egg_se$pval,3), round(egg_vi$pval,3), round(t.test(sei~research_setting, data=d)$p.value,3)),
-  note = c("small-study effect present","survives adjustment","survives adjustment",
-           "survives; not a metric artifact","", "","precision uncorrelated with setting"))
+  note = c("slope not significant at 0.05", "slope not significant at 0.05",
+           "slope significant at 0.05", "slope not significant at 0.05",
+           "", "", "no detected mean-SE difference at 0.05"))
 write.csv(S10, file.path(output_dir, "SI_S10.csv"), row.names = FALSE)
 
 cat("Wrote SI_S7.csv, SI_S8.csv, SI_S9.csv, SI_S10.csv to output/\n")
