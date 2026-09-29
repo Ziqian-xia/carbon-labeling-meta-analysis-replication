@@ -1,11 +1,13 @@
-Carbon-labeling replication check
-Package root: /Users/ziqianxia/Documents/carbon-labeling-meta-analysis-replication
+Carbon-labeling replication check — manuscript numerical targets 2026-09-29
+Scope: primary/PET models, subgroup tests, S5 and S7-S10. Not a full manuscript validation.
+Not checked: Bayesian fits, extraction eligibility, TES assumptions, Figure S5 power inputs.
+Package root: /private/tmp/carbon_metadata_publish28
 k = 52 effect sizes; articles = 22
-Primary multilevel model: d = 0.133, 95% CI [0.029, 0.236]
-Heterogeneity: Q(51) = 260.77, p < .001; RE I2 = 95.7%
-PET lower-bound estimate: g = 0.000, 95% CI [-0.142, 0.142]
-Prediction interval: RE [-0.347, 0.631]; multilevel [-0.376, 0.641]
-Three-parameter selection model: all LRTs non-significant; smallest p = 0.196
-z-curve: ERR = 0.77; EDR = 0.73; implied false-discovery rate = 1.9%
-Small-study slope: PET b = 1.026, p = 0.0233; all-moderator PET b = 1.058, p = 0.0045; sqrt(1/n) b = 1.950, p = 0.0410
+Primary multilevel model: d = 0.187, 95% CI [0.070, 0.305]
+Heterogeneity: Q(51) = 322.99, p < .001; RE I2 = 96.4%
+PET-adjusted estimate: d = 0.074, 95% CI [-0.107, 0.254]
+Prediction interval: RE [-0.345, 0.731]; multilevel [-0.376, 0.751]
+Three-parameter selection model: all LRTs non-significant; smallest p = 0.182
+z-curve: ERR = 0.81; EDR = 0.78; implied false-discovery rate = 1.5%
+Small-study slope: PET b = 0.847, p = 0.1215; all-moderator PET b = 0.938, p = 0.0289; sqrt(1/n) b = 1.591, p = 0.1645
 Automated numeric checks passed: YES

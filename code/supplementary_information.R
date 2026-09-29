@@ -66,13 +66,23 @@ ggsave(file.path(output_dir, "Figure_S1_sensitivity.png"), s1,
        width = 10, height = 7.93, units = "in", dpi = 300, bg = "white")
 
 #figure s2
-library(metafor)
-m1 <- rma(yi=cohens_d,vi=v,data = metadata_change)
-png(file.path(output_dir, "Figure_S2_cumulative.png"),
-    width = 2400, height = 2072, res = 300)
-plot(cumul(m1))
-p2a <- recordPlot()
-dev.off()
+# Accumulate by publication year; studyid breaks ties within each year.
+s2_data <- metadata_change[order(metadata_change$`Publication Year`, metadata_change$studyid), ]
+m1 <- rma(yi = cohens_d, vi = v, data = s2_data, method = "REML")
+s2_cumulative <- cumul(m1)
+s2_points <- data.frame(year = s2_data$`Publication Year`, studyid = s2_data$studyid,
+                        effect_size = s2_cumulative$estimate, I2 = s2_cumulative$I2)
+s2_points$I2[1] <- NA_real_  # Heterogeneity is undefined for a single estimate.
+s2 <- ggplot(s2_points, aes(x = effect_size, y = I2)) +
+  geom_path(colour = "grey75", linewidth = 0.5, na.rm = TRUE) +
+  geom_point(aes(colour = year), size = 2.5, na.rm = TRUE) +
+  scale_colour_gradient(low = "grey75", high = "black", name = "Publication year",
+                        breaks = c(2014, 2016, 2019, 2022, 2025)) +
+  labs(x = "Cumulative effect size (Cohen's d)", y = "Heterogeneity (I², %)" ) +
+  theme_bw(base_size = 14)
+ggsave(file.path(output_dir, "Figure_S2_cumulative.png"), s2,
+       width = 8, height = 6.9, units = "in", dpi = 300, bg = "white")
+write.csv(s2_points, file.path(output_dir, "Figure_S2_values.csv"), row.names = FALSE)
 
 #figure s3
 rm <- rma(yi=cohens_d, vi=v, data = metadata_change)
@@ -98,37 +108,20 @@ m4 <- rma.mv(yi = cohens_d, V = v, mods = ~ TLL, data = metadata_change,random =
                                                                                       ~ 1 | Key))
 m5 <- rma.mv(yi = cohens_d, V = v, mods = ~ research_setting, data = metadata_change,random = list(~ 1 | studyid,     # indicate level 2
                                                                                       ~ 1 | Key))
-# Extract subgroup effects from the model (excluding intercept)
-subgroup_results1 <- data.frame(
-  factor = levels(metadata_change$scenario),  # Extract subgroup names
-  effect_size = m1$b,                        # Extract estimated effect sizes
-  lower_ci = m1$ci.lb,                        # Extract lower bound of CI
-  upper_ci = m1$ci.ub                         # Extract upper bound of CI
-)
-subgroup_results2 <- data.frame(
-  factor = levels(metadata_change$product_category),  # Extract subgroup names
-  effect_size = m2$b,                        # Extract estimated effect sizes
-  lower_ci = m2$ci.lb,                        # Extract lower bound of CI
-  upper_ci = m2$ci.ub                         # Extract upper bound of CI
-)
-subgroup_results3 <- data.frame(
-  factor = levels(metadata_change$sample_characteristics),  # Extract subgroup names
-  effect_size = m3$b,                        # Extract estimated effect sizes
-  lower_ci = m3$ci.lb,                        # Extract lower bound of CI
-  upper_ci = m3$ci.ub                         # Extract upper bound of CI
-)
-subgroup_results4 <- data.frame(
-  factor = levels(metadata_change$TLL),  # Extract subgroup names
-  effect_size = m4$b,                        # Extract estimated effect sizes
-  lower_ci = m4$ci.lb,                        # Extract lower bound of CI
-  upper_ci = m4$ci.ub                         # Extract upper bound of CI
-)
-subgroup_results5 <- data.frame(
-  factor = levels(metadata_change$research_setting),  # Extract subgroup names
-  effect_size = m5$b,                        # Extract estimated effect sizes
-  lower_ci = m5$ci.lb,                        # Extract lower bound of CI
-  upper_ci = m5$ci.ub                         # Extract upper bound of CI
-)
+# Predict each group's mean from the same moderator models.
+# Non-intercept coefficients alone are contrasts, not subgroup means.
+subgroup_predictions <- function(fit, variable) {
+  lev <- levels(metadata_change[[variable]])
+  nd <- setNames(data.frame(factor(lev, levels = lev)), variable)
+  X <- model.matrix(reformulate(variable), nd)
+  pr <- predict(fit, newmods = X[, -1, drop = FALSE])
+  data.frame(factor = lev, effect_size = pr$pred, lower_ci = pr$ci.lb, upper_ci = pr$ci.ub)
+}
+subgroup_results1 <- subgroup_predictions(m1, "scenario")
+subgroup_results2 <- subgroup_predictions(m2, "product_category")
+subgroup_results3 <- subgroup_predictions(m3, "sample_characteristics")
+subgroup_results4 <- subgroup_predictions(m4, "TLL")
+subgroup_results5 <- subgroup_predictions(m5, "research_setting")
 
 # Add a panel indicator
 subgroup_results1$panel <- "Scenario"
@@ -154,7 +147,7 @@ s4 <- ggplot(combined_results, aes(x = effect_size, y = reorder(factor, desc(pan
   geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci, color = panel), height = 0.15) +  # Slim error bars
   geom_vline(xintercept = 0, linetype = "dashed", color = "black", linewidth = 0.8) +  # Reference line at zero
   facet_grid(panel ~ ., scales = "free_y", space = "free") +  # Separate panels
-  labs(title = "",x = "Effect Size (Cohen's d)", y = "") +  # No title
+  labs(title = "",x = "Model-estimated subgroup effect (Cohen's d; 95% CI)", y = "") +  # No title
   scale_color_manual(values = c("Scenario" = "#a6cee3", "Research\nSetting" = "#1f78b4", "Type of\nProduct" = "#b2df8a","Sample\nCharacteristics" = "#33a02c","Label\nDesign"="#fb9a99")) +  # Custom colors
   theme_minimal(base_size = 15) +  # Adjust base font size for readability
   theme(
@@ -171,6 +164,8 @@ s4 <- ggplot(combined_results, aes(x = effect_size, y = reorder(factor, desc(pan
 s4
 ggsave(file.path(output_dir, "Figure_S4_subgroups.png"), s4,
        width = 10, height = 11.2, units = "in", dpi = 300, bg = "white")
+
+write.csv(combined_results, file.path(output_dir, "Figure_S4_values.csv"), row.names = FALSE)
 
 #figure s5
 library(metafor)
@@ -332,7 +327,7 @@ saveWorkbook(wb, "Planned_Comparisons_and_Omnibus.xlsx", overwrite = TRUE)
 
 
 
-#table s4
+#table s5: risk-of-bias domains
 library(metafor)
 library(dplyr)
 library(stringr)
@@ -406,6 +401,8 @@ tab <- bind_rows(
     QM       = formatC(QM,       format = "f", digits = 3),
     QM.p     = fmt_p(as.numeric(QM.p))
   )
+
+write.csv(tab, file.path(output_dir, "Table_S5_risk_of_bias.csv"), row.names = FALSE)
 
 ft <- flextable(tab)
 
